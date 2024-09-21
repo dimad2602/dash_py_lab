@@ -14,7 +14,7 @@ def get_star_size_selector(data_frame, star_size_selector_id):
     star_size_selector = dcc.Dropdown(
         id = star_size_selector_id,
         options=options,
-        value =['small', 'similar'],
+        value =['small', 'similar', 'bigger'],
         multi=True
     )
     return star_size_selector
