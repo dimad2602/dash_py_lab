@@ -2,7 +2,7 @@ from dash.dependencies import Input, Output
 import plotly.express as px
 
 
-def radius_slider_callbacks(app, data_frame, temp_chart_id, slider_id):
+def radius_slider_callback(app, data_frame, temp_chart_id, slider_id):
 
     @app.callback(
         Output(component_id=temp_chart_id, component_property='figure'),
