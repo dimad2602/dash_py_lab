@@ -4,11 +4,12 @@ import dash_html_components as html
 
 import plotly.express as px
 import repository
-from components import planet_radius_selector
-from callbacks.radius_slider_callback import radius_slider_callback
+from components import planet_radius_selector, star_size_selector
+from callbacks.radius_slider_callback import filters_callback
 
 slider_id = 'planet-radius-slider'
 temp_chart_id = 'dist-temp-chart'
+star_size_selector_id = 'star-selector'
 
 data_limit = 2000
 """ READ DATA"""
@@ -18,8 +19,11 @@ data_frame = data_frame[data_frame['PER'] > 0]
 
 #fig = px.scatter(data_frame, x='TPLANET', y='A')
 
-platet_radius_selector = planet_radius_selector.get_selector(
+planet_radius_selector_component = planet_radius_selector.get_selector(
     data_frame, slider_id)
+
+star_size_category_component = star_size_selector.get_star_size_selector(
+    data_frame, star_size_selector_id)
 
 app = dash.Dash(__name__)
 """ LAYOUT """
@@ -27,7 +31,13 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1('Hello Dash'),
     html.Div('Select planet main semi-axis range'),
-    html.Div(platet_radius_selector,
+    html.Div(planet_radius_selector_component,
+             style={
+                 'width': '400px',
+                 'margin-bottom': '40px'
+             }),
+    html.Div('Star size'),
+    html.Div(star_size_category_component,
              style={
                  'width': '400px',
                  'margin-bottom': '40px'
@@ -40,7 +50,8 @@ app.layout = html.Div([
                           'margin-right': '80px'
                       })
 """ CALLBACKS """
-radius_slider_callback(app, data_frame, temp_chart_id, slider_id)
+filters_callback(app, data_frame, temp_chart_id, slider_id,
+                 star_size_selector_id)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
