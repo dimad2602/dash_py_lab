@@ -90,27 +90,29 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(
     [
-        dbc.Row(html.H1('Hello Dash'), style={'margin-bottom': 40}),
-        dbc.Row([
-            dbc.Col([
-                html.H6('Select planet main semi-axis range'),
-                html.Div(planet_radius_selector_component),
-            ],
-                    width={'size': 2}),
-            dbc.Col([
-                html.H6('Star size'),
-                html.Div(star_size_category_component)
-            ],
-                    width={
-                        'size': 3,
-                        'offset': 1
-                    }),
-            dbc.Col([
-                dbc.Button(
-                    'Apply', id=apply_button_id, n_clicks=0, className='mr-2')
-            ])
-        ],
+        dbc.Row(html.H1('Джегло Дмитрий КИ24-02-7М'),
                 style={'margin-bottom': 40}),
+        dbc.Row(
+            [
+                dbc.Col([
+                    html.H6('Select planet main semi-axis range'),
+                    html.Div(planet_radius_selector_component)
+                ],
+                        width={'size': 2}),
+                dbc.Col([
+                    html.H6('Star size'),
+                    html.Div(star_size_category_component)
+                ],
+                        width={'size': 3, 'offset': 1}),
+                dbc.Col(
+                            dbc.Button('Apply',
+                                       id=apply_button_id,
+                                       n_clicks=0,
+                                       className='mr-2'),
+                    align='center',  
+                ),
+            ],
+            style={'margin-bottom': 40}),
         #charts
         dbc.Tabs([
             dbc.Tab(tab1_content, label='Charts'),
