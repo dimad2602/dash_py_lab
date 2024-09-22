@@ -1,18 +1,21 @@
 from dash.dependencies import Input, Output, State
 import plotly.express as px
+import dash_table
+from dash import html
 
 
 def filters_celestial_and_temperature_chart_callback(
         app, data_frame, temp_chart_id, celestial_chart_id, slider_id,
-        star_size_selector_id, reletive_distance_chart_id, mstar_tsar_chart_id, button_id):
+        star_size_selector_id, reletive_distance_chart_id, mstar_tsar_chart_id,
+        data_table_id, button_id):
 
     @app.callback([
         Output(component_id=celestial_chart_id, component_property='figure'),
         Output(component_id=temp_chart_id, component_property='figure'),
         Output(component_id=reletive_distance_chart_id,
                component_property='figure'),
-        Output(component_id=mstar_tsar_chart_id,
-               component_property='figure')
+        Output(component_id=mstar_tsar_chart_id, component_property='figure'),
+        Output(component_id=data_table_id, component_property='children')
     ], [Input(component_id=button_id, component_property='n_clicks')], [
         State(component_id=slider_id, component_property='value'),
         State(component_id=star_size_selector_id, component_property='value')
@@ -36,7 +39,7 @@ def filters_celestial_and_temperature_chart_callback(
                                     x='relative_dist',
                                     color='status',
                                     barmode='overlay',
-                                    marginal='violin')
+                                    marginal='box')  #marginal='violin'
 
         fig_distance.add_vline(x=1,
                                y0=0,
@@ -50,4 +53,23 @@ def filters_celestial_and_temperature_chart_callback(
                                size='RPLANET',
                                color='status')
 
-        return fig_celestial, fig_temp, fig_distance, fig_mstar
+        #DATA TABLE
+        raw_data = chart_data.drop(
+            ['relative_dist', 'StarSize', 'ROW', 'temp', 'gravity'], axis=1)
+
+        tb1 = dash_table.DataTable(data=raw_data.to_dict('records'),
+                                   columns=[{
+                                       'name': i,
+                                       'id': i
+                                   } for i in raw_data.columns],
+                                   style_data={
+                                       'width': '100px',
+                                       'maxWidth': '100px',
+                                       'minWidth': '100px'
+                                   },
+                                   style_header={'textAlign': 'center'},
+                                   page_size=40)
+
+        html_tb1 = [html.P('Raw Data'), tb1]
+
+        return fig_celestial, fig_temp, fig_distance, fig_mstar, html_tb1

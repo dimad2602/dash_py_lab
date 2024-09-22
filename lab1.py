@@ -1,8 +1,7 @@
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import dash_bootstrap_components as dbc
-import plotly.express as px
 from data import estimate_status, planet_gravity, planet_temperature
 from data.relative_distance import get_relative_distance
 import data.repository as repository
@@ -16,12 +15,14 @@ temp_chart_id = 'dist-temp-chart'
 celestial_chart_id = 'celestial-chart'
 reletive_distance_chart_id = 'reletive_distance_chart'
 mstar_tsar_chart_id = 'mstar_tsar_chart'
+data_table_id = 'data_table'
 
 data_limit = 2000
 """ READ DATA"""
 
 data_frame = repository.load_data(data_limit)
 data_frame = data_frame[data_frame['PER'] > 0]
+data_frame['KOI'] = data_frame['KOI'].astype(int, errors='ignore')
 
 #fig = px.scatter(data_frame, x='TPLANET', y='A')
 
@@ -38,6 +39,43 @@ star_size_category_component = star_size_selector.get_star_size_selector(
 
 #RELATIVE DISTANCE (distance to SUN/SUM radii)
 relative_distance = get_relative_distance(data_frame)
+"""TABS CONTENT"""
+tab1_content = [
+    dbc.Row([
+        dbc.Col([
+            html.Div('Planet Temprature ~ Distance from the Star'),
+            dcc.Graph(id=temp_chart_id),
+        ],
+                width={
+                    'size': 6,
+                },
+                md=6),
+        dbc.Col([
+            html.Div('Position on the Celestial Sphere'),
+            dcc.Graph(id=celestial_chart_id)
+        ],
+                md=6)
+    ],
+            style={'margin-top': 20}),
+    dbc.Row([
+        dbc.Col([
+            html.Div('Relative Distance (AU/SOl radii)'),
+            dcc.Graph(id=reletive_distance_chart_id),
+        ],
+                width={
+                    'size': 6,
+                },
+                md=6),
+        dbc.Col([
+            html.Div('Star Mass ~ Star Temperature'),
+            dcc.Graph(id=mstar_tsar_chart_id)
+        ],
+                md=6)
+    ],
+            style={'margin-bottom': 40})
+]
+
+tab2_content = [dbc.Row(html.Div(id=data_table_id), style={'margin-top': 20})]
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 """ LAYOUT """
@@ -66,35 +104,10 @@ app.layout = html.Div(
         ],
                 style={'margin-bottom': 40}),
         #charts
-        dbc.Row([
-            dbc.Col([
-                html.Div('Planet Temprature ~ Distance from the Star'),
-                dcc.Graph(id=temp_chart_id),
-            ],
-                    width={
-                        'size': 6,
-                    },
-                    md=6),
-            dbc.Col([
-                html.Div('Position on the Celestial Sphere'),
-                dcc.Graph(id=celestial_chart_id)
-            ],
-                    md=6)
-        ]),
-        dbc.Row([
-            dbc.Col([
-                html.Div('Relative Distance (AU/SOl radii)'),
-                dcc.Graph(id=reletive_distance_chart_id),
-            ],
-                    width={
-                        'size': 6,
-                    },
-                    md=6),
-            dbc.Col([html.Div('Star Mass ~ Star Temperature'),
-                     dcc.Graph(id=mstar_tsar_chart_id)],
-                    md=6)
-        ],
-                style={'margin-bottom': 40})
+        dbc.Tabs([
+            dbc.Tab(tab1_content, label='Charts'),
+            dbc.Tab(tab2_content, label='Data Table')
+        ])
     ],
     style={
         'margin-left': '80px',
@@ -105,7 +118,7 @@ app.layout = html.Div(
 filters_celestial_and_temperature_chart_callback(
     app, data_frame, temp_chart_id, celestial_chart_id, slider_id,
     star_size_selector_id, reletive_distance_chart_id, mstar_tsar_chart_id,
-    apply_button_id)
+    data_table_id, apply_button_id)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
