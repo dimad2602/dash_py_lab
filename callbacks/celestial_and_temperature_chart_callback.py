@@ -3,7 +3,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from dash import dash_table
 from dash import html
-
+import pandas as pd
 #Design settings
 
 CHARTS_TEMPLATE = go.layout.Template(
@@ -16,23 +16,23 @@ COLOR_STATUS_VALUES = ['lightgray', '#1F85DE', '#f90f04']  #'#62de1f'
 def filters_celestial_and_temperature_chart_callback(
         app, data_frame, temp_chart_id, celestial_chart_id, slider_id,
         star_size_selector_id, reletive_distance_chart_id, mstar_tsar_chart_id,
-        data_table_id, button_id):
+        data_table_id, button_id, filter_data):
 
-    @app.callback([
-        Output(component_id=celestial_chart_id, component_property='figure'),
-        Output(component_id=temp_chart_id, component_property='figure'),
-        Output(component_id=reletive_distance_chart_id,
-               component_property='figure'),
-        Output(component_id=mstar_tsar_chart_id, component_property='figure'),
-        Output(component_id=data_table_id, component_property='children')
-    ], [Input(component_id=button_id, component_property='n_clicks')], [
-        State(component_id=slider_id, component_property='value'),
-        State(component_id=star_size_selector_id, component_property='value')
-    ])
-    def update_charts(n, radius_range, star_size):
-        chart_data = data_frame[(data_frame['RPLANET'] > radius_range[0])
-                                & (data_frame['RPLANET'] < radius_range[1])
-                                & data_frame['StarSize'].isin(star_size)]
+    @app.callback(
+        [
+            Output(component_id=celestial_chart_id,
+                   component_property='figure'),
+            Output(component_id=temp_chart_id, component_property='figure'),
+            Output(component_id=reletive_distance_chart_id,
+                   component_property='figure'),
+            Output(component_id=mstar_tsar_chart_id,
+                   component_property='figure'),
+            Output(component_id=data_table_id, component_property='children')
+        ],
+        [Input(component_id=filter_data, component_property='data')],
+    )
+    def update_charts(data):
+        chart_data = pd.read_json(data, orient='split')
 
         # Фигуры для графиков
         fig_celestial = px.scatter(chart_data,

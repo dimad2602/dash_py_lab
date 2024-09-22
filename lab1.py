@@ -2,6 +2,7 @@ import dash
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+from callbacks.filter_data_collback import filter_data_callback
 from components.tab3_content import get_tab3_content
 from data import estimate_status, planet_gravity, planet_temperature
 from data.relative_distance import get_relative_distance
@@ -17,6 +18,7 @@ celestial_chart_id = 'celestial-chart'
 reletive_distance_chart_id = 'reletive_distance_chart'
 mstar_tsar_chart_id = 'mstar_tsar_chart'
 data_table_id = 'data_table'
+filtered_data_store_id = 'filtered_data_store'
 
 data_limit = 2000
 """ READ DATA"""
@@ -90,29 +92,29 @@ app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(
     [
+        dcc.Store(id=filtered_data_store_id, storage_type='session'),
         dbc.Row(html.H1('Джегло Дмитрий КИ24-02-7М'),
                 style={'margin-bottom': 40}),
-        dbc.Row(
-            [
-                dbc.Col([
-                    html.H6('Select planet main semi-axis range'),
-                    html.Div(planet_radius_selector_component)
-                ],
-                        width={'size': 2}),
-                dbc.Col([
-                    html.H6('Star size'),
-                    html.Div(star_size_category_component)
-                ],
-                        width={'size': 3, 'offset': 1}),
-                dbc.Col(
-                            dbc.Button('Apply',
-                                       id=apply_button_id,
-                                       n_clicks=0,
-                                       className='mr-2'),
-                    align='center',  
-                ),
+        dbc.Row([
+            dbc.Col([
+                html.H6('Select planet main semi-axis range'),
+                html.Div(planet_radius_selector_component)
             ],
-            style={'margin-bottom': 40}),
+                    width={'size': 2}),
+            dbc.Col(
+                [html.H6('Star size'),
+                 html.Div(star_size_category_component)],
+                width={
+                    'size': 3,
+                    'offset': 1
+                }),
+            dbc.Col(
+                dbc.Button(
+                    'Apply', id=apply_button_id, n_clicks=0, className='mr-2'),
+                align='center',
+            ),
+        ],
+                style={'margin-bottom': 40}),
         #charts
         dbc.Tabs([
             dbc.Tab(tab1_content, label='Charts'),
@@ -126,10 +128,13 @@ app.layout = html.Div(
     })
 """ CALLBACKS """
 
+filter_data_callback(app, data_frame, filtered_data_store_id, apply_button_id,
+                     slider_id, star_size_selector_id)
+
 filters_celestial_and_temperature_chart_callback(
     app, data_frame, temp_chart_id, celestial_chart_id, slider_id,
     star_size_selector_id, reletive_distance_chart_id, mstar_tsar_chart_id,
-    data_table_id, apply_button_id)
+    data_table_id, apply_button_id, filtered_data_store_id)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
