@@ -1,5 +1,5 @@
 import pandas as pd
-import dash_core_components as dcc
+from dash import dcc
 
 def get_star_size_selector(data_frame, star_size_selector_id):
     bins = [0, 0.8, 1.2, 100]

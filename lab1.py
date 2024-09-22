@@ -2,6 +2,7 @@ import dash
 from dash import dcc
 from dash import html
 import dash_bootstrap_components as dbc
+from components.tab3_content import get_tab3_content
 from data import estimate_status, planet_gravity, planet_temperature
 from data.relative_distance import get_relative_distance
 import data.repository as repository
@@ -77,6 +78,13 @@ tab1_content = [
 
 tab2_content = [dbc.Row(html.Div(id=data_table_id), style={'margin-top': 20})]
 
+table_header = [
+    html.Thead(html.Tr([html.Th("Field Name"),
+                        html.Th("Detailds")]))
+]
+
+tab3_content = get_tab3_content()
+
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 """ LAYOUT """
 
@@ -106,7 +114,8 @@ app.layout = html.Div(
         #charts
         dbc.Tabs([
             dbc.Tab(tab1_content, label='Charts'),
-            dbc.Tab(tab2_content, label='Data Table')
+            dbc.Tab(tab2_content, label='Data Table'),
+            dbc.Tab(tab3_content, label='About')
         ])
     ],
     style={
