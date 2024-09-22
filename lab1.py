@@ -44,7 +44,7 @@ relative_distance = get_relative_distance(data_frame)
 tab1_content = [
     dbc.Row([
         dbc.Col([
-            html.Div('Planet Temprature ~ Distance from the Star'),
+            html.H4('Planet Temprature ~ Distance from the Star'),
             dcc.Graph(id=temp_chart_id),
         ],
                 width={
@@ -52,7 +52,7 @@ tab1_content = [
                 },
                 md=6),
         dbc.Col([
-            html.Div('Position on the Celestial Sphere'),
+            html.H4('Position on the Celestial Sphere'),
             dcc.Graph(id=celestial_chart_id)
         ],
                 md=6)
@@ -60,7 +60,7 @@ tab1_content = [
             style={'margin-top': 20}),
     dbc.Row([
         dbc.Col([
-            html.Div('Relative Distance (AU/SOl radii)'),
+            html.H4('Relative Distance (AU/SOl radii)'),
             dcc.Graph(id=reletive_distance_chart_id),
         ],
                 width={
@@ -68,7 +68,7 @@ tab1_content = [
                 },
                 md=6),
         dbc.Col([
-            html.Div('Star Mass ~ Star Temperature'),
+            html.H4('Star Mass ~ Star Temperature'),
             dcc.Graph(id=mstar_tsar_chart_id)
         ],
                 md=6)
@@ -93,12 +93,12 @@ app.layout = html.Div(
         dbc.Row(html.H1('Hello Dash'), style={'margin-bottom': 40}),
         dbc.Row([
             dbc.Col([
-                html.Div('Select planet main semi-axis range'),
+                html.H6('Select planet main semi-axis range'),
                 html.Div(planet_radius_selector_component),
             ],
                     width={'size': 2}),
             dbc.Col([
-                html.Div('Star size'),
+                html.H6('Star size'),
                 html.Div(star_size_category_component)
             ],
                     width={

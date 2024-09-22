@@ -1,7 +1,16 @@
 from dash.dependencies import Input, Output, State
 import plotly.express as px
+import plotly.graph_objects as go
 from dash import dash_table
 from dash import html
+
+#Design settings
+
+CHARTS_TEMPLATE = go.layout.Template(
+    layout=dict(font=dict(family='Century Gothic', size=14),
+                legend=dict(orientation='h', title_text='', x=0, y=1.1)))
+
+COLOR_STATUS_VALUES = ['lightgray', '#1F85DE', '#f90f04']  #'#62de1f'
 
 
 def filters_celestial_and_temperature_chart_callback(
@@ -30,9 +39,14 @@ def filters_celestial_and_temperature_chart_callback(
                                    x='RA',
                                    y='DEC',
                                    size='RPLANET',
-                                   color='status')
+                                   color='status',
+                                   color_discrete_sequence=COLOR_STATUS_VALUES)
+
+        fig_celestial.update_layout(template=CHARTS_TEMPLATE)
 
         fig_temp = px.scatter(chart_data, x='TPLANET', y='A', color='StarSize')
+
+        fig_temp.update_layout(template=CHARTS_TEMPLATE)
 
         # График гистограммы расстояний
         fig_distance = px.histogram(chart_data,
@@ -47,11 +61,16 @@ def filters_celestial_and_temperature_chart_callback(
                                annotation_text='Earth',
                                line_dash='dot')
 
+        fig_distance.update_layout(template=CHARTS_TEMPLATE)
+
         fig_mstar = px.scatter(chart_data,
                                x='MSTAR',
                                y='TSTAR',
                                size='RPLANET',
-                               color='status')
+                               color='status',
+                               color_discrete_sequence=COLOR_STATUS_VALUES)
+
+        fig_mstar.update_layout(template=CHARTS_TEMPLATE)
 
         #DATA TABLE
         raw_data = chart_data.drop(
@@ -70,6 +89,6 @@ def filters_celestial_and_temperature_chart_callback(
                                    style_header={'textAlign': 'center'},
                                    page_size=40)
 
-        html_tb1 = [html.P('Raw Data'), tb1]
+        html_tb1 = [html.H4('Raw Data'), tb1]
 
         return fig_celestial, fig_temp, fig_distance, fig_mstar, html_tb1
